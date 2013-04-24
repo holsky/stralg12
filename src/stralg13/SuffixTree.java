@@ -21,11 +21,12 @@ public class SuffixTree {
 	public void makeSuffixTree() {
 		root = new Node();
 		root.addEdge(0, string.length() - 1);
-		/*Node headOfIplus1 = null;
-		Node headOfI = root;*/
-		for (int i = 0; i < string.length(); ++i) {
+		Node headOfIplus1 = null;
+		Node headOfI = root;
+		
+		for (int i = 0; i < string.length() - 1; ++i) {
 			if (headOfI.equals(root)) {
-				headOfIplus1 = slowscan(root, i);
+				headOfIplus1 = slowscan(root, i+1);
 				headOfI.addEdge(i+1, string.length() - 1);
 			} else {
 				
