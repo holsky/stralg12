@@ -16,11 +16,22 @@ public class Node {
 		this.parent = parent;
 	}
 	
-	public void addEdge(int startIndex, int endIndex) {
+	public void addEdgeAndNewNode(int startIndex, int endIndex) {
 		edges.put(new Tuple(startIndex, endIndex), new Node(this));
 	}
 	
+	public void addEdgeAndNode(Tuple edge, Node node) {
+		edges.put(edge, node);
+	}
 	
+	void splitEdge (Tuple edge, int index) {
+		Node childNode = edges.get(edge);
+		edges.remove(edge);
+		addEdgeAndNewNode(edge.first, index);
+		edges.get(new Tuple(edge.first, index))
+			.addEdgeAndNode(new Tuple(index, edge.second), childNode);
+		
+	}
 	
 	public boolean equals(Node otherNode) {
 		
