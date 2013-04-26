@@ -24,13 +24,20 @@ public class SuffixTree {
 		Node headOfI = root;
 
 		for (int i = 0; i < string.length() - 1; ++i) {
+			if (i == string.length () - 1 - 1) {
+				root.addEdgeAndNewNode(i +1, i+1);
+			}
 			if (headOfI.equals(root)) {
-				SlowScanResult scresult = slowscan(root, i + 1); 
-				headOfIplus1 = scresult.node;
+				SlowScanResult scresult = slowscan(root, i +1 ); 
+				
 				if (scresult.isAnEdge()) {
-					scresult.node.splitEdge(scresult.edge, scresult.index);
+					headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
+					headOfIplus1.addEdgeAndNewNode((i + 1) + scresult.index, string.length() - 1);
+				} else {
+					headOfI.addEdgeAndNewNode(i + 1, string.length() - 1);
+					headOfIplus1 = root;
 				}
-				headOfI.addEdgeAndNewNode(i + 1, string.length() - 1);
+				
 			} else {
 
 			}
@@ -67,12 +74,14 @@ public class SuffixTree {
 	}
 
 	boolean edgeStartsWithString(int startIndex, Tuple tuple) {
+		if (startIndex == string.length() - 1) 
+			return false;
 		return string.substring(tuple.first, tuple.second).startsWith(
 				string.substring(startIndex, string.length() - 1));
 	}
 	
 	int getOccurenceOnEdge(int startIndex, Tuple tuple) {
-		return string.indexOf(string.substring(startIndex, string.length() - 1));
+		return string.indexOf(string.substring(startIndex, string.length() - 1)) + 1;
 	}
 
 }

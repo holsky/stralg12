@@ -24,12 +24,15 @@ public class Node {
 		edges.put(edge, node);
 	}
 	
-	void splitEdge (Tuple edge, int index) {
+	Node splitEdgeAndReturnNewNode (Tuple edge, int index) {
 		Node childNode = edges.get(edge);
 		edges.remove(edge);
+		
 		addEdgeAndNewNode(edge.first, index);
 		edges.get(new Tuple(edge.first, index))
 			.addEdgeAndNode(new Tuple(index, edge.second), childNode);
+		
+		return edges.get(new Tuple(edge.first, index));
 		
 	}
 	
