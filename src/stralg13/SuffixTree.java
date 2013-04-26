@@ -25,7 +25,11 @@ public class SuffixTree {
 
 		for (int i = 0; i < string.length() - 1; ++i) {
 			if (headOfI.equals(root)) {
-				headOfIplus1 = slowscan(root, i + 1);
+				SlowScanResult scresult = slowscan(root, i + 1); 
+				headOfIplus1 = scresult.node;
+				if (scresult.isAnEdge()) {
+					scresult.node.splitEdge(scresult.edge, scresult.index);
+				}
 				headOfI.addEdgeAndNewNode(i + 1, string.length() - 1);
 			} else {
 
@@ -39,30 +43,36 @@ public class SuffixTree {
 		return string.equals(otherTree.string) && root.equals(otherTree.root);
 	}
 
-	Node slowscan(Node startNode, int startIndex) {
+	SlowScanResult slowscan(Node startNode, int startIndex) {
 		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 			if (edgeEqualsString(startIndex, edge.getKey())) {
 				return slowscan(startNode.edges.get(edge.getKey()), startIndex
 						+ edge.getKey().second - edge.getKey().first);
 			}
 			if (edgeStartsWithString(startIndex, edge.getKey())) {
-				return slowscan(startNode.edges.get(edge.getKey()), startIndex
-						+ edge.getKey().second - edge.getKey().first);
+				return SlowScanResult.makeEdgeResult(startNode, edge.getKey(),
+						getOccurenceOnEdge(startIndex, edge.getKey()));
 			}
 		}
-		return startNode;
+		return SlowScanResult.makeNodeResult(startNode);
 	}
 
 	private boolean edgeEqualsString(int startIndex, Tuple key) {
-		if (startIndex + key.second - key.first > string.length() - 1)
+		if ((startIndex + (key.second - key.first)) > string.length() - 1)
 			return false;
-		return string.substring(startIndex, key.second - key.first).equals(
+		if (key.first - key.second == 0)
+			return false;
+		return string.substring(startIndex, startIndex + key.second - key.first).equals(
 				string.substring(key.first, key.second));
 	}
 
 	boolean edgeStartsWithString(int startIndex, Tuple tuple) {
-		return string.substring(startIndex).startsWith(
-				string.substring(tuple.first, tuple.second));
+		return string.substring(tuple.first, tuple.second).startsWith(
+				string.substring(startIndex, string.length() - 1));
+	}
+	
+	int getOccurenceOnEdge(int startIndex, Tuple tuple) {
+		return string.indexOf(string.substring(startIndex, string.length() - 1));
 	}
 
 }
