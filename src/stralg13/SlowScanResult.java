@@ -6,8 +6,8 @@ public class SlowScanResult {
 	Tuple edge;
 	int index;
 	
-	public static SlowScanResult makeNodeResult(Node node) {
-		return new SlowScanResult(node, null, 0);
+	public static SlowScanResult makeNodeResult(Node node, int occurenceIndex) {
+		return new SlowScanResult(node, null, occurenceIndex);
 	}
 	
 	public static SlowScanResult makeEdgeResult(Node node, Tuple edge, int occurenceIndex) {
