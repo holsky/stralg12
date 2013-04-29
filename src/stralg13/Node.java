@@ -69,6 +69,20 @@ public class Node {
 	    return true;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("{");
+		for (Tuple edge : edges.keySet()) {
+			sb.append("[" + edge.first + "," + edge.second + "] = ");
+			sb.append(edges.get(edge));
+			sb.append(",");
+		}
+		sb.append("}");
+		
+		return sb.toString();
+	}
+	
 
 	
 }

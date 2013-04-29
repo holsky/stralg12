@@ -62,6 +62,12 @@ public class SlowScanResult {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "SlowScanResult [node=" + node + ", edge=" + edge + ", index="
+				+ index + "]";
+	}
 	
 	
 	

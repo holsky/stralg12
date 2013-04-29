@@ -41,41 +41,38 @@ public class SuffixTree {
 				}
 				
 			} else {
-				Tuple parentToHeadEdge = null; // v
-				for (Map.Entry<Tuple, Node> edge : headOfI.parent.edges.entrySet()) {
-					if (edge.getValue() == headOfI) {
-						parentToHeadEdge = edge.getKey();
-						break;
-					}
-				}
-				SlowScanResult fastScanResult = null; // w (edge or node)
-				if (headOfI.parent == root) {
-					if (parentToHeadEdge.first + 1 < parentToHeadEdge.second)
-						fastScanResult = fastscan(root, parentToHeadEdge.first + 1, parentToHeadEdge.second); 
-				} else {
-					fastScanResult = fastscan(headOfI.parent.suffixLink, parentToHeadEdge.first, parentToHeadEdge.second);
-				}
+				Tuple parentToHeadEdge = findParentEdge(headOfI); // v
 				
-				Node w = null;
-				if (fastScanResult == null || fastScanResult.isANode()) {
-					if (fastScanResult == null)
-						w = root;
-					else
-						w = fastScanResult.node;
+				SlowScanResult fastScanResult = findW(headOfI, parentToHeadEdge);
+				
+				Node candidateHeadOfIPlusOne = null; // w
+				if (fastScanResult.isANode()) {
+					candidateHeadOfIPlusOne = fastScanResult.node;
 
-					SlowScanResult scresult = slowscan(w, heads[i], string.length());
+					SlowScanResult scresult = slowscanWithIndex(candidateHeadOfIPlusOne,
+							fastScanResult.index,
+							heads[i],
+							string.length());
 					if (scresult.isAnEdge()) {
 						headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
+						heads[i + 1] = scresult.index;
 					} else {
-						headOfIplus1 = scresult.node; 
+						headOfIplus1 = scresult.node;
+						heads[i + 1] = scresult.index;
 					}
-					heads[i + 1] = scresult.index - (i+1);
+					//
+					
 				} else if (fastScanResult.isAnEdge()) {
 					headOfIplus1 = fastScanResult.node.splitEdgeAndReturnNewNode(fastScanResult.edge, fastScanResult.index);
-					heads[i + 1] = fastScanResult.index;
-					w = headOfIplus1;
+					//have to substract fastScanResult.edge.first
+					//because it is the length (in indices) from the path to the head(i+1) node
+					heads[i + 1] = fastScanResult.index - fastScanResult.edge.first;
+					candidateHeadOfIPlusOne = headOfIplus1;
 				}
-				headOfI.suffixLink = w;
+				headOfI.suffixLink = candidateHeadOfIPlusOne;
+				
+				//i+1 is the distance that it must in all cases have 
+				//heads[i+1] is the distance we are already down the tree
 				headOfIplus1.addEdgeAndNewNode(i + 1 + heads[i + 1], string.length());
 				
 				//headOfIplus1.addEdgeAndNewNode((i + 1) + fastScanResult.index, string.length() - 1);
@@ -85,10 +82,47 @@ public class SuffixTree {
 		}
 	}
 
+	protected SlowScanResult findW(Node headOfI, Tuple parentToHeadEdge) {
+		if (headOfI.parent == root ) {
+			if (parentToHeadEdge.first + 1 < parentToHeadEdge.second) {
+				return fastscan(root, parentToHeadEdge.first + 1, parentToHeadEdge.second);
+			} else { 
+				return SlowScanResult.makeNodeResult(root, 0);
+			}
+		} else {
+			return fastscan(headOfI.parent.suffixLink, parentToHeadEdge.first, parentToHeadEdge.second);
+		}		
+	}
+
+	protected Tuple findParentEdge(Node headOfI) {
+		for (Map.Entry<Tuple, Node> edge : headOfI.parent.edges.entrySet()) {
+			if (edge.getValue() == headOfI) {
+				return edge.getKey();
+			}
+		}
+		return null;
+	}
+
 	public boolean equals(SuffixTree otherTree) {
 		return string.equals(otherTree.string) && root.equals(otherTree.root);
 	}
 
+	SlowScanResult slowscanWithIndex(Node startNode, int startNodeIndex, int startIndex, int endIndex) {
+		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
+			if (edgeEqualsString(startIndex, edge.getKey())) {
+				return slowscanWithIndex(startNode.edges.get(edge.getKey()),
+						edge.getKey().second, 
+						startIndex + edge.getKey().second - edge.getKey().first,
+						endIndex);
+			}
+			if (edgeStartsWithString(startIndex, edge.getKey())) {
+				return SlowScanResult.makeEdgeResult(startNode, edge.getKey(),
+						getOccurenceOnEdge(startIndex, endIndex, edge.getKey()));
+			}
+		}
+		return SlowScanResult.makeNodeResult(startNode, startNodeIndex);
+	}
+	
 	SlowScanResult slowscan(Node startNode, int startIndex, int endIndex) {
 		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 			if (edgeEqualsString(startIndex, edge.getKey())) {
@@ -131,6 +165,11 @@ public class SuffixTree {
 		}
 		return tuple.first + i;
 		//return string.indexOf(string.substring(startIndex, string.length() - 1)) + 1;
+	}
+	
+	@Override
+	public String toString() {
+		return string + "\n" + root.toString();
 	}
 
 }
