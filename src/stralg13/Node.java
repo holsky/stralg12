@@ -60,7 +60,7 @@ public class Node {
 	    
 	    for (Map.Entry<Tuple, Node> edge : edges.entrySet()) {
 	        if (otherNode.edges.containsKey(edge.getKey())) {
-	            boolean result = edges.get(edge.getKey()).equals(otherNode.edges.get(edge.getKey()));
+	            boolean result = edge.getValue().equals(otherNode.edges.get(edge.getKey()));
 	            if (!result)
 	            	return false;
 	        } else

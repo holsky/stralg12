@@ -26,7 +26,7 @@ public class SuffixTree {
 		int heads[] = new int[string.length()];
 		heads[0] = 0;
 
-		for (int i = 0; i < string.length() - 1; ++i) {
+		for (int i = 0; i < string.length() -2; ++i) {
 			if (headOfI.equals(root)) {
 				SlowScanResult scresult = slowscan(root, i + 1, string.length()); 
 				
@@ -77,9 +77,11 @@ public class SuffixTree {
 				
 				//headOfIplus1.addEdgeAndNewNode((i + 1) + fastScanResult.index, string.length() - 1);
 			}
-
+		
 			headOfI = headOfIplus1;
 		}
+		root.addEdgeAndNewNode(string.length() - 1, string.length());		
+		
 	}
 
 	protected SlowScanResult findW(Node headOfI, Tuple parentToHeadEdge) {
