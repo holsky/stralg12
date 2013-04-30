@@ -38,57 +38,63 @@ public class SuffixTree {
 					headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
 					headOfIplus1.addEdgeAndNewNode((i + 1) + scresult.index, string.length());
 					//where the tail(i+1) begins relative to the string
-					//scresult.index would be relative to the suffix
 					tailStart[i + 1] = i + 1 + scresult.index;
 					headIndexFromStringStart[i + 1] = scresult.index;
+
 				//if it is a node, then it must be added to root
 				//since the head(i) is the root, head(i+1) is the root too,
 				// because head(i) is a prefix of head(i+1) 
 				} else {
 					root.addEdgeAndNewNode(i + 1, string.length());
 					headOfIplus1 = root;
-					//where tail(i+1) begins relative to the string
 					headIndexFromStringStart[i + 1] = 0;
-					headIndexFromStringStart[i + 1] = 0;
+					tailStart[i + 1] = i+1;
 				}
 				
 			} else {
 				Tuple parentToHeadEdge = findParentEdge(headOfI); // v
 				
-				//here we find whatever the root of the tree head(i) is in
+				//here we find the root of the tree head(i) is in
 				ScanResult subtreeContainingHeadOfIPlus1 = findW(headOfI, parentToHeadEdge);
 				
 				if (subtreeContainingHeadOfIPlus1.isAnEdge()) {
 					
 					headOfIplus1 = subtreeContainingHeadOfIPlus1.node
 							.splitEdgeAndReturnNewNode(subtreeContainingHeadOfIPlus1.edge, subtreeContainingHeadOfIPlus1.index);
+					
 					//where head(i) ends, relative to start of string
 					headIndexFromStringStart[i + 1] = subtreeContainingHeadOfIPlus1.index;
+				
 					//where the tail(i+1) begins, relative to the suffix
 					//add index, because that is how far the suffix is already covered by the edge
 					//subtract 1, because index is exclusive
 					tailStart[i + 1] = i+1 + subtreeContainingHeadOfIPlus1.index-1;
+					
 					//if w is an edge, we take the result of the split as suffix link
 					//which is headOfIplus1
 					headOfI.suffixLink = headOfIplus1;
+					
 				} else if (subtreeContainingHeadOfIPlus1.isANode()) {
 
 					ScanResult scresult = slowscan(subtreeContainingHeadOfIPlus1.node,
-				//			subtreeContainingHeadOfIPlus1.index,
 							tailStart[i],
 							string.length());
 					if (scresult.isAnEdge()) {
 						headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
+
 						//where the tail(i+1) begins, relative to start of the string
 						tailStart[i + 1] = i+1 + scresult.index;
+						
 						//where head(i+1) ends, relative to start of string
 						headIndexFromStringStart[i + 1] =  scresult.index;
 					} else {
 						headOfIplus1 = scresult.node;
+						
 						//where head(i+1) ends, relative to start of string
-						headIndexFromStringStart[i + 1] = scresult.index;
+						headIndexFromStringStart[i + 1] = subtreeContainingHeadOfIPlus1.index;
+						
 						//where the tail(i+1) begins, relative to start of the string
-						tailStart[i + 1] = i+1 + scresult.index;
+						tailStart[i + 1] = scresult.index;
 					}
 					//if w is a node, we can just put it as suffix link
 					headOfI.suffixLink = subtreeContainingHeadOfIPlus1.node;
@@ -134,14 +140,17 @@ public class SuffixTree {
 	}
 	
 	ScanResult slowscan(Node startNode, int startIndex, int endIndex) {
-		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
-			if (edgeEqualsString(startIndex, edge.getKey())) {
-				return slowscan(startNode.edges.get(edge.getKey()), startIndex
-						+ edge.getKey().second - edge.getKey().first, endIndex);
-			}
-			if (edgeStartsWithString(startIndex, edge.getKey())) {	
-				return ScanResult.makeEdgeResult(startNode, edge.getKey(),
-						getOccurenceOnEdgeRelativeToEdgeStart(startIndex, endIndex, edge.getKey()));
+		//check for this, might happen if called recursively
+		if (startIndex < endIndex) {
+			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
+				if (edgeEqualsString(startIndex, edge.getKey())) {
+					return slowscan(startNode.edges.get(edge.getKey()), startIndex
+							+ edge.getKey().second - edge.getKey().first, endIndex);
+				}
+				if (edgeStartsWithString(startIndex, edge.getKey())) {	
+					return ScanResult.makeEdgeResult(startNode, edge.getKey(),
+							getOccurenceOnEdgeRelativeToEdgeStart(startIndex, endIndex, edge.getKey()));
+				}
 			}
 		}
 		return ScanResult.makeNodeResult(startNode, startIndex);
