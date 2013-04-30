@@ -15,19 +15,22 @@
 
 \maketitle
 
-\subsection{Insights}
+\subsection*{Insights}
 While implementing the algorithm we got a deeper understanding of its working. We understood how $head(i)$ and $head(i+1)$ relate to each other, and how the suffix links help us finding them.\\
-To implement the algorithm we had to think a lot about string indices. For example, the string index returned by slowscan has to be absolute in the string, not relativ to the edge, otherwise adding $tail(i)$ does not work properly.
+To implement the algorithm we had to think a lot about string indices and what they mean. It was often very difficult to realize what the semantics of a given string index is, and which of the ones available should be used, added, subtracted etc. It helped to use clear variable names.
 
-\subsection{Problems}
+\subsection*{Problems}
 \begin{itemize}
   \item problems with string indices, off by one errors
   \item semantics of the intervals: now defined as [,)
-  \item problems having the right indices when adding tail(i+1), it was difficult to get the right value for head(i+1) in all cases
+  \item problems because we mixed values for where head(i) ends and tail(i) begins
+  \item solved these by using two clearly labelled arrays
+  \item variable names in pseudocode do not explain what they contain, had to invent better ones
+  \item 
 \end{itemize}
 
-\subsection{Bytes for suffix node}
+\subsection*{Bytes per suffix node}
 
-\subsection{Measured time}
+\subsection*{Measured time}
 
 \end{document}
