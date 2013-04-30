@@ -2,16 +2,19 @@
 
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
-\usepackage{babel}
+\usepackage[english]{babel}
 \usepackage{fontenc}
 \usepackage{graphicx}
 
 \usepackage[dvips]{hyperref}
-
+\title{String Algorithms 2013 - Assignment 1}
 \author{Holger Schmeisky, Tashi Sherpa, Matúš Tomlein}
 \date{30.04.2013}
 
 \begin{document}
+
+\maketitle
+
 \subsection{Insights}
 While implementing the algorithm we got a deeper understanding of its working. We understood how $head(i)$ and $head(i+1)$ relate to each other, and how the suffix links help us finding them.\\
 To implement the algorithm we had to think a lot about string indices. For example, the string index returned by slowscan has to be absolute in the string, not relativ to the edge, otherwise adding $tail(i)$ does not work properly.
