@@ -6,6 +6,7 @@ public class SuffixTree {
 	public static final String STRING_END = "$";
 	Node root;
 	String string;
+	int iteration = -1;
 
 	public SuffixTree(String string) {
 		this.string = string + STRING_END;
@@ -19,7 +20,7 @@ public class SuffixTree {
 
 	public void makeSuffixTree() {
 		root = new Node();
-		root.addEdgeAndNewNode(0, string.length());
+		root.addEdgeAndNewNode(0, string.length(), iteration);
 		root.suffixLink = root;
 		Node headOfIplus1 = null;
 		Node headOfI = root;
@@ -28,27 +29,27 @@ public class SuffixTree {
 		headIndexFromStringStart[0] = 0;
 		tailStart[0] = 0;
 
-		for (int i = 0; i < string.length() -2; ++i) {
+		for (iteration = 0; iteration < string.length() -2; ++iteration) {
 			if (headOfI.equals(root)) {
 				//scan for suffix(i+1)
-				ScanResult scresult = slowscan(root, i + 1, string.length()); 
+				ScanResult scresult = slowscan(root, iteration + 1, string.length()); 
 				
 				//if it is an edge, split that edge
 				if (scresult.isAnEdge()) {
-					headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
-					headOfIplus1.addEdgeAndNewNode((i + 1) + scresult.index, string.length());
+					headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index, iteration);
+					headOfIplus1.addEdgeAndNewNode((iteration + 1) + scresult.index, string.length(), iteration);
 					//where the tail(i+1) begins relative to the string
-					tailStart[i + 1] = i + 1 + scresult.index;
-					headIndexFromStringStart[i + 1] = scresult.index;
+					tailStart[iteration + 1] = iteration + 1 + scresult.index;
+					headIndexFromStringStart[iteration + 1] = scresult.index;
 
 				//if it is a node, then it must be added to root
 				//since the head(i) is the root, head(i+1) is the root too,
 				// because head(i) is a prefix of head(i+1) 
 				} else {
-					root.addEdgeAndNewNode(i + 1, string.length());
+					root.addEdgeAndNewNode(iteration + 1, string.length(), iteration);
 					headOfIplus1 = root;
-					headIndexFromStringStart[i + 1] = 0;
-					tailStart[i + 1] = i+1;
+					headIndexFromStringStart[iteration + 1] = 0;
+					tailStart[iteration + 1] = iteration+1;
 				}
 				
 			} else {
@@ -60,15 +61,15 @@ public class SuffixTree {
 				if (subtreeContainingHeadOfIPlus1.isAnEdge()) {
 					
 					headOfIplus1 = subtreeContainingHeadOfIPlus1.node
-							.splitEdgeAndReturnNewNode(subtreeContainingHeadOfIPlus1.edge, subtreeContainingHeadOfIPlus1.index);
+							.splitEdgeAndReturnNewNode(subtreeContainingHeadOfIPlus1.edge, subtreeContainingHeadOfIPlus1.index, iteration);
 					
 					//where head(i) ends, relative to start of string
-					headIndexFromStringStart[i + 1] = subtreeContainingHeadOfIPlus1.index;
+					headIndexFromStringStart[iteration + 1] = subtreeContainingHeadOfIPlus1.index;
 				
 					//where the tail(i+1) begins, relative to the suffix
 					//add index, because that is how far the suffix is already covered by the edge
 					//subtract 1, because index is exclusive
-					tailStart[i + 1] = i+1 + subtreeContainingHeadOfIPlus1.index-1;
+					tailStart[iteration + 1] = iteration+1 + subtreeContainingHeadOfIPlus1.index-1;
 					
 					//if w is an edge, we take the result of the split as suffix link
 					//which is headOfIplus1
@@ -77,24 +78,24 @@ public class SuffixTree {
 				} else if (subtreeContainingHeadOfIPlus1.isANode()) {
 
 					ScanResult scresult = slowscan(subtreeContainingHeadOfIPlus1.node,
-							tailStart[i],
+							tailStart[iteration],
 							string.length());
 					if (scresult.isAnEdge()) {
-						headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index);
+						headOfIplus1 = scresult.node.splitEdgeAndReturnNewNode(scresult.edge, scresult.index, iteration);
 
 						//where the tail(i+1) begins, relative to start of the string
-						tailStart[i + 1] = i+1 + scresult.index;
+						tailStart[iteration + 1] = iteration+1 + scresult.index;
 						
 						//where head(i+1) ends, relative to start of string
-						headIndexFromStringStart[i + 1] =  scresult.index;
+						headIndexFromStringStart[iteration + 1] =  scresult.index;
 					} else {
 						headOfIplus1 = scresult.node;
 						
 						//where head(i+1) ends, relative to start of string
-						headIndexFromStringStart[i + 1] = subtreeContainingHeadOfIPlus1.index;
+						headIndexFromStringStart[iteration + 1] = subtreeContainingHeadOfIPlus1.index;
 						
 						//where the tail(i+1) begins, relative to start of the string
-						tailStart[i + 1] = scresult.index;
+						tailStart[iteration + 1] = scresult.index;
 					}
 					//if w is a node, we can just put it as suffix link
 					headOfI.suffixLink = subtreeContainingHeadOfIPlus1.node;
@@ -103,14 +104,14 @@ public class SuffixTree {
 				
 				//i+1 is the distance that it must in all cases have 
 				//heads[i+1] is the distance we are already down the tree
-				headOfIplus1.addEdgeAndNewNode(tailStart[i+1], string.length());
+				headOfIplus1.addEdgeAndNewNode(tailStart[iteration+1], string.length(), iteration);
 				
 				//headOfIplus1.addEdgeAndNewNode((i + 1) + fastScanResult.index, string.length() - 1);
 			}
 		
 			headOfI = headOfIplus1;
 		}
-		root.addEdgeAndNewNode(string.length() - 1, string.length());		
+		root.addEdgeAndNewNode(string.length() - 1, string.length(), iteration);		
 		
 	}
 
@@ -140,6 +141,7 @@ public class SuffixTree {
 	}
 	
 	ScanResult slowscan(Node startNode, int startIndex, int endIndex) {
+		startNode.addIteration(iteration);
 		//check for this, might happen if called recursively
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {

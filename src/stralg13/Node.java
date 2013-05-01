@@ -1,6 +1,8 @@
 package stralg13;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,6 +10,7 @@ public class Node {
 	Map<Tuple, Node> edges = new HashMap<Tuple, Node>();
 	Node parent = null;
 	Node suffixLink = null;
+	List<Integer> iterationsVisited = new ArrayList<Integer>();
 	
 	public Node() {
 		this(null);
@@ -18,8 +21,13 @@ public class Node {
 	}
 	
 	public Node addEdgeAndNewNode(int startIndex, int endIndex) {
+		return addEdgeAndNewNode(startIndex, endIndex, -1);
+	}
+	
+	public Node addEdgeAndNewNode(int startIndex, int endIndex, int iteration) {
 		Node node = new Node(this);
 		edges.put(new Tuple(startIndex, endIndex), node);
+		node.addIteration(iteration);
 		return node;
 	}
 	
@@ -28,15 +36,25 @@ public class Node {
 	}
 	
 	Node splitEdgeAndReturnNewNode (Tuple edge, int index) {
+		return splitEdgeAndReturnNewNode(edge, index, -1);
+	}
+	
+	Node splitEdgeAndReturnNewNode (Tuple edge, int index, int iteration) {
 		Node childNode = edges.get(edge);
 		edges.remove(edge);
 		
-		Node newNode = addEdgeAndNewNode(edge.first, index);
+		Node newNode = addEdgeAndNewNode(edge.first, index, iteration);
 		childNode.parent = newNode;
+		newNode.iterationsVisited.addAll(childNode.iterationsVisited);
 		newNode.addEdgeAndNode(new Tuple(index, edge.second), childNode);
 		
 		return newNode;
 		
+	}
+	
+	public void addIteration(int i) {
+		if (!iterationsVisited.contains(i + 1))
+			iterationsVisited.add(i + 1);
 	}
 
 	@Override
