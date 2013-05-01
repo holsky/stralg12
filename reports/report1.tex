@@ -30,6 +30,20 @@ To implement the algorithm we had to think a lot about string indices and what t
 
 \subsection*{Bytes per suffix node}
 
+We used the Java Instrumentation package to find out the bytes used for a suffix tree node.
+The package gave us these results for the members of our Node class:
+
+\begin{itemize}
+	\item \emph{Map{\textless}Tuple, Node{\textgreater} edges} - 48 bytes
+	\item \emph{Node parent} - 24 bytes
+	\item \emph{Node suffixLink} - 24 bytes
+	\item \emph{List{\textless}Integer{\textgreater} iterationsVisited} - 32 bytes
+\end{itemize}
+
+So all in all a Node object takes 128 bytes.
+In a real suffix tree node, the required size would be higher because the hash map of edges and the list would contain some members.
+But the Java instrumentation package didn't allow us to calculate that.
+
 \subsection*{Measured time}
 
 \end{document}
