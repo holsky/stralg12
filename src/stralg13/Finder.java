@@ -22,7 +22,7 @@ public class Finder {
 	public List<Integer> findNode(Node startNode, int startNodeIndex, int patternIndex) {
 		List<Integer> results = new ArrayList<Integer>();
 		
-		if (patternIndex >= pattern.length())
+		/*if (patternIndex >= pattern.length())
 			return startNode.iterationsVisited;
 		
 		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
@@ -43,7 +43,7 @@ public class Finder {
 								edge.getKey().second,
 								patternIndex + edge.getKey().second - edge.getKey().first));
 			}
-		}
+		}*/
 		
 		return results;
 	}
