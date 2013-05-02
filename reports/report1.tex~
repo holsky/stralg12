@@ -8,12 +8,15 @@
 
 \usepackage[dvips]{hyperref}
 \title{String Algorithms 2013 - Assignment 1}
-\author{Holger Schmeisky, Tashi Sherpa, Matúš Tomlein}
+\author{Holger Schmeisky, Tashi Sherpa, MatÃºÅ¡ Tomlein}
 \date{30.04.2013}
 
 \begin{document}
 
 \maketitle
+
+\subsection*{State of the algorithm}
+The algorithm does not work correctly. It constructs the correct suffix trees for some inputs, like ABAABABA, but not for others like ABABBBA. We spent around 30 hours in total on the implementation.
 
 \subsection*{Insights}
 While implementing the algorithm we got a deeper understanding of its working. We understood how $head(i)$ and $head(i+1)$ relate to each other, and how the suffix links help us finding them.\\
@@ -21,16 +24,30 @@ To implement the algorithm we had to think a lot about string indices and what t
 
 \subsection*{Problems}
 \begin{itemize}
-  \item problems with string indices, off by one errors
-  \item semantics of the intervals: now defined as [,)
-  \item problems because we mixed values for where head(i) ends and tail(i) begins
-  \item solved these by using two clearly labelled arrays
-  \item variable names in pseudocode do not explain what they contain, had to invent better ones
-  \item 
+  \item We had a lot of problems with string indices and off by one errors
+  \item We struggled with the semantics of the edge intervals: they are now defined as [,)
+  \item We mixed the indices where head(i) ends and tail(i) begins in one array
+  \item We solved these by using two clearly labelled arrays
+  \item The variable names in pseudocode do not explain what they contain, had to invent better ones
 \end{itemize}
 
 \subsection*{Bytes per suffix node}
 
+We used the Java Instrumentation package to find out the bytes used for a suffix tree node.
+The package gave us these results for the members of our Node class:
+
+\begin{itemize}
+	\item \emph{Map{\textless}Tuple, Node{\textgreater} edges} - 48 bytes
+	\item \emph{Node parent} - 24 bytes
+	\item \emph{Node suffixLink} - 24 bytes
+	\item \emph{List{\textless}Integer{\textgreater} iterationsVisited} - 32 bytes
+\end{itemize}
+
+So all in all a Node object takes 128 bytes.\\
+In a real suffix tree node, the required size would be higher because the hash map of edges and the list would contain some members, but the Java instrumentation package didn't allow us to calculate that.
+
 \subsection*{Measured time}
+
+Since the algorithm does not work correctly, we did not measure the time.
 
 \end{document}
