@@ -81,17 +81,18 @@ public class SuffixTree {
 
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
-				if (edgeEqualsString(startIndex, edge.getKey())) {
+				if (shouldContinueDown(startIndex, endIndex, edge.getKey())) {
 					slowscan3(startNode.edges.get(edge.getKey()),
 							startIndex + edge.getKey().second
 									- edge.getKey().first, endIndex);
 					return;
 				}
-				if (edgeStartsWithString(startIndex, edge.getKey())) {
+				if (shouldSplitEdge(startIndex, edge.getKey())) {
 					int index = getSplitIndex(
 							startIndex, endIndex, edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), index);
+					
 					int tailIndex = getLeafIndex(startIndex, endIndex,
 							edge.getKey());
 					head.addEdgeAndNewNode(iteration + tailIndex,
@@ -115,21 +116,22 @@ public class SuffixTree {
 	Node slowscan2(Node startNode, int startIndex, int endIndex) {
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
-				if (edgeEqualsString(startIndex, edge.getKey())) {
+				if (shouldContinueDown(startIndex, endIndex, edge.getKey())) {
 					return slowscan2(startNode.edges.get(edge.getKey()),
 							startIndex + edge.getKey().second
 									- edge.getKey().first, endIndex);
 				}
-				if (edgeStartsWithString(startIndex, edge.getKey())) {
+				if (shouldSplitEdge(startIndex, edge.getKey())) {
 					int headIndex = getSplitIndex(
 							startIndex, endIndex, edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
+					
 					int tailIndex = getLeafIndex(startIndex, endIndex,
 							edge.getKey());
 					head.addEdgeAndNewNode(tailIndex, string.length());
+					
 					tailStart[iteration + 1] = tailIndex;
-
 					return head;
 				}
 			}
@@ -139,16 +141,16 @@ public class SuffixTree {
 		return startNode;
 	}
 
-	private boolean edgeEqualsString(int startIndex, Tuple key) {
+	private boolean shouldContinueDown(int startIndex, int endIndex, Tuple key) {
 		if ((startIndex + (key.second - key.first)) > string.length() - 1)
 			return false;
 
 		return string
-				.substring(startIndex, startIndex + key.second - key.first)
-				.equals(string.substring(key.first, key.second));
+				.substring(startIndex, endIndex)
+				.startsWith(string.substring(key.first, key.second));
 	}
 
-	boolean edgeStartsWithString(int startIndex, Tuple tuple) {
+	boolean shouldSplitEdge(int startIndex, Tuple tuple) {
 		return string.charAt(tuple.first) == string.charAt(startIndex);
 	}
 
