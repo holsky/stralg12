@@ -43,9 +43,7 @@ public class SuffixTreeNaive {
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
 					
-					int tailIndex = getLeafIndex(startIndex, endIndex,
-							edge.getKey());
-					head.addEdgeAndNewNode(iteration + 1 + headIndex, string.length());
+					head.addEdgeAndNewNode(iteration + 1 + (startIndex - iteration), string.length());
 					
 					return head;
 				}

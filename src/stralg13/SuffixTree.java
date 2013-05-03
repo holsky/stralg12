@@ -94,7 +94,7 @@ public class SuffixTree {
 							edge.getKey(), index);
 					
 					int tailIndex = getLeafIndex(startIndex, endIndex,
-							edge.getKey());
+							new Tuple(edge.getKey().first, index));
 					head.addEdgeAndNewNode(iteration + tailIndex,
 							string.length());
 
@@ -172,6 +172,15 @@ public class SuffixTree {
 				break;
 		}
 		return startIndex + i;
+	}
+	
+	int getLeafIndex3(int startIndex, int endIndex, Tuple tuple) {
+		int i = 0;
+		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
+			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
+				break;
+		}
+		return tuple.second;
 	}
 
 	@Override
