@@ -49,7 +49,9 @@ public class SuffixTree {
 							tailStart[iteration], string.length());
 					headOfI.suffixLink = root;
 				} else  {
-					startNode = startNode.suffixLink;
+					if (startNode.suffixLink != null) {
+						startNode = startNode.suffixLink;
+					}
 					slowscan3(startNode,
 							startIndex, endIndex);
 				}
@@ -86,11 +88,11 @@ public class SuffixTree {
 					return;
 				}
 				if (edgeStartsWithString(startIndex, edge.getKey())) {
-					int index = getOccurenceOnEdgeRelativeToEdgeStart(
+					int index = getSplitIndex(
 							startIndex, endIndex, edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), index);
-					int tailIndex = getOccurenceOnEdge(startIndex, endIndex,
+					int tailIndex = getLeafIndex(startIndex, endIndex,
 							edge.getKey());
 					head.addEdgeAndNewNode(iteration + tailIndex,
 							string.length());
@@ -119,11 +121,11 @@ public class SuffixTree {
 									- edge.getKey().first, endIndex);
 				}
 				if (edgeStartsWithString(startIndex, edge.getKey())) {
-					int headIndex = getOccurenceOnEdgeRelativeToEdgeStart(
+					int headIndex = getSplitIndex(
 							startIndex, endIndex, edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
-					int tailIndex = getOccurenceOnEdge(startIndex, endIndex,
+					int tailIndex = getLeafIndex(startIndex, endIndex,
 							edge.getKey());
 					head.addEdgeAndNewNode(tailIndex, string.length());
 					tailStart[iteration + 1] = tailIndex;
@@ -150,29 +152,24 @@ public class SuffixTree {
 		return string.charAt(tuple.first) == string.charAt(startIndex);
 	}
 
-	int getOccurenceOnEdgeRelativeToEdgeStart(int startIndex, int endIndex,
+	int getSplitIndex(int startIndex, int endIndex,
 			Tuple tuple) {
-		// i is the occurence relative to the beginning of the string
 		int i = 0;
 		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
 			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
 				break;
 		}
 		return tuple.first + i;
-		// return string.indexOf(string.substring(startIndex, string.length() -
-		// 1)) + 1;
+		 
 	}
 
-	int getOccurenceOnEdge(int startIndex, int endIndex, Tuple tuple) {
-		// i is the occurence relative to the beginning of the string
+	int getLeafIndex(int startIndex, int endIndex, Tuple tuple) {
 		int i = 0;
 		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
 			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
 				break;
 		}
 		return startIndex + i;
-		// return string.indexOf(string.substring(startIndex, string.length() -
-		// 1)) + 1;
 	}
 
 	@Override
