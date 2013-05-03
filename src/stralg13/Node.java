@@ -11,6 +11,8 @@ public class Node {
 	Node parent = null;
 	Node suffixLink = null;
 	
+	int leafIndex = 0;
+	
 	public Node() {
 		this(null);
 	}
@@ -75,6 +77,7 @@ public class Node {
 	    }
 	    return true;
 	}
+
 	
 	@Override
 	public String toString() {

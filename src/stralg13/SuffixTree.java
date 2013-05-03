@@ -8,9 +8,12 @@ public class SuffixTree {
 	String string;
 	int[] tailStart;
 	int iteration = 0;
-	
+
 	Node headOfIplus1 = null;
 	Node headOfI = null;
+
+	int originalStart = 0;
+	int originalEnd = 0;
 
 	public SuffixTree(String string) {
 		this.string = string + STRING_END;
@@ -33,39 +36,49 @@ public class SuffixTree {
 
 		for (iteration = 0; iteration < string.length() - 2; ++iteration) {
 			if (headOfI.equals(root)) {
-				headOfIplus1 = slowscan2(root, iteration + 1, string.length());
+				headOfIplus1 = scanAddNewNodeAndEdge(root, iteration + 1, string.length());
 			} else {
 				Tuple parentToHeadEdge = findParentEdge(headOfI);
-
+				
 				int startIndex = parentToHeadEdge.first;
 				int endIndex = parentToHeadEdge.second;
 				Node startNode = headOfI.parent;
-				if (headOfI.parent == root) {
+				if (startNode == root) {
 					startIndex++;
-				} 
-				if (headOfI.parent == root && startIndex >= endIndex) {
-					headOfIplus1 = slowscan2(
-							root,
-							tailStart[iteration], string.length());
-					headOfI.suffixLink = root;
-				} else  {
-					if (startNode.suffixLink != null) {
-						startNode = startNode.suffixLink;
+					if (startNode == root && startIndex >= endIndex) {
+						headOfIplus1 = scanAddNewNodeAndEdge(root, iteration + 1,
+								string.length());
+						headOfI.suffixLink = root;
+					} else {
+						fastscanThenMaybeSlowscan(root, startIndex, endIndex);
 					}
-					slowscan3(startNode,
-							startIndex, endIndex);
+				} else {
+					startNode = startNode.suffixLink;
+					fastscanThenMaybeSlowscan(startNode, startIndex, endIndex);
 				}
 			}
 
 			headOfI = headOfIplus1;
 		}
-		root.addEdgeAndNewNode(string.length() - 1, string.length());
+		Node leaf = root.addEdgeAndNewNode(string.length() - 1, string.length());
+		leaf.leafIndex = string.length() - 1;
 
 	}
 
+	public int getDepth(Node node) {
+		int sum = 0;
+		Node current = node;
+		while (current.parent != null) {
+			Tuple edge = findParentEdge(current);
+			sum += edge.second - edge.first;
+			current = current.parent;
+		}
+		return sum;
+	}
+	
 	protected Tuple findParentEdge(Node headOfI) {
 		for (Map.Entry<Tuple, Node> edge : headOfI.parent.edges.entrySet()) {
-			if (edge.getValue() == headOfI) {
+			if (edge.getValue().equals(headOfI)) {
 				return edge.getKey();
 			}
 		}
@@ -76,68 +89,68 @@ public class SuffixTree {
 		return string.equals(otherTree.string) && root.equals(otherTree.root);
 	}
 
-
-	void slowscan3(Node startNode, int startIndex, int endIndex) {
+	void fastscanThenMaybeSlowscan(Node startNode, int startIndex, int endIndex) {
 
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 				if (shouldContinueDown(startIndex, endIndex, edge.getKey())) {
-					slowscan3(startNode.edges.get(edge.getKey()),
-							startIndex + edge.getKey().second
-									- edge.getKey().first, endIndex);
+					fastscanThenMaybeSlowscan(startNode.edges.get(edge.getKey()), startIndex
+							+ edge.getKey().second - edge.getKey().first,
+							endIndex);
 					return;
 				}
 				if (shouldSplitEdge(startIndex, edge.getKey())) {
-					int index = getSplitIndex(
-							startIndex, endIndex, edge.getKey());
+					int index = getSplitIndex(startIndex, endIndex,
+							edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), index);
-					
-					int tailIndex = getLeafIndex(startIndex, endIndex,
-							new Tuple(edge.getKey().first, index));
-					head.addEdgeAndNewNode(iteration + tailIndex,
+
+					Node leaf = head.addEdgeAndNewNode(iteration  + 1 + getDepth(head),
 							string.length());
+					leaf.leafIndex = iteration + 1;
+						
+					headOfIplus1 = head;
+					headOfI.suffixLink = startNode;
 
-					headOfIplus1 = startNode;
-					headOfI.suffixLink = headOfIplus1;
-
-					tailStart[iteration + 1] = iteration + tailIndex;
+					tailStart[iteration + 1] = iteration + 1  + getDepth(head);
 					return;
 				}
 			}
 		}
-		
-		headOfIplus1 = slowscan2(
-				startNode,
-				tailStart[iteration], string.length());
+
+		headOfIplus1 = scanAddNewNodeAndEdge(startNode, tailStart[iteration],
+				string.length());
 		headOfI.suffixLink = startNode;
 	}
 
-	Node slowscan2(Node startNode, int startIndex, int endIndex) {
+	Node scanAddNewNodeAndEdge(Node startNode, int startIndex, int endIndex) {
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 				if (shouldContinueDown(startIndex, endIndex, edge.getKey())) {
-					return slowscan2(startNode.edges.get(edge.getKey()),
+					return scanAddNewNodeAndEdge(startNode.edges.get(edge.getKey()),
 							startIndex + edge.getKey().second
 									- edge.getKey().first, endIndex);
 				}
 				if (shouldSplitEdge(startIndex, edge.getKey())) {
-					int headIndex = getSplitIndex(
-							startIndex, endIndex, edge.getKey());
+					int headIndex = getSplitIndex(startIndex, endIndex,
+							edge.getKey());
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
+
+					Node leaf = head.addEdgeAndNewNode(iteration + 1  + getDepth(head), string.length());
+					leaf.leafIndex = iteration + 1;
 					
-					int tailIndex = getLeafIndex(startIndex, endIndex,
-							edge.getKey());
-					head.addEdgeAndNewNode(tailIndex, string.length());
+					headOfIplus1 = head;
+					headOfI.suffixLink = startNode;
 					
-					tailStart[iteration + 1] = tailIndex;
+					tailStart[iteration + 1] = iteration + 1  + getDepth(head);
 					return head;
 				}
 			}
 		}
 		tailStart[iteration + 1] = startIndex;
-		startNode.addEdgeAndNewNode(startIndex, string.length());
+		Node leaf = startNode.addEdgeAndNewNode(startIndex, string.length());
+		leaf.leafIndex = iteration + 1;
 		return startNode;
 	}
 
@@ -145,42 +158,22 @@ public class SuffixTree {
 		if ((startIndex + (key.second - key.first)) > string.length() - 1)
 			return false;
 
-		return string
-				.substring(startIndex, endIndex)
-				.startsWith(string.substring(key.first, key.second));
+		return string.substring(startIndex, endIndex).startsWith(
+				string.substring(key.first, key.second));
 	}
 
 	boolean shouldSplitEdge(int startIndex, Tuple tuple) {
 		return string.charAt(tuple.first) == string.charAt(startIndex);
 	}
 
-	int getSplitIndex(int startIndex, int endIndex,
-			Tuple tuple) {
+	int getSplitIndex(int startIndex, int endIndex, Tuple tuple) {
 		int i = 0;
 		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
 			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
 				break;
 		}
 		return tuple.first + i;
-		 
-	}
 
-	int getLeafIndex(int startIndex, int endIndex, Tuple tuple) {
-		int i = 0;
-		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
-			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
-				break;
-		}
-		return startIndex + i;
-	}
-	
-	int getLeafIndex3(int startIndex, int endIndex, Tuple tuple) {
-		int i = 0;
-		for (; i < tuple.second - tuple.first && i < endIndex - startIndex; ++i) {
-			if (string.charAt(startIndex + i) != string.charAt(tuple.first + i))
-				break;
-		}
-		return tuple.second;
 	}
 
 	@Override

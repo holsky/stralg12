@@ -22,13 +22,17 @@ public class Finder {
 	public List<Integer> findNode(Node startNode, int startNodeIndex, int patternIndex) {
 		List<Integer> results = new ArrayList<Integer>();
 		
-		/*if (patternIndex >= pattern.length())
-			return startNode.iterationsVisited;
+		if (patternIndex >= pattern.length()) {
+			findLeaves(startNode, results);
+			return results;
+		}
 		
 		for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 			if (edge.getKey().first >= input.length()) {
-				if (patternIndex >= pattern.length())
-					return startNode.iterationsVisited;
+				if (patternIndex >= pattern.length()) {
+					findLeaves(startNode, results);
+					return results;
+				}
 				continue;
 			}
 			String inputSubstring;
@@ -43,11 +47,21 @@ public class Finder {
 								edge.getKey().second,
 								patternIndex + edge.getKey().second - edge.getKey().first));
 			}
-		}*/
+		}
 		
 		return results;
 	}
 	
+	private void findLeaves(Node node, List<Integer> result) {
+		if (node.edges.isEmpty())  {
+			result.add(node.leafIndex);
+		} else {
+			for (Map.Entry<Tuple, Node> edge : node.edges.entrySet()) {
+				findLeaves(edge.getValue(), result);
+			}
+		}
+	}
+
 	public int[] combineArrays(int[] array1, int[] array2) {
 		if (array1.length == 0)
 			return array2;

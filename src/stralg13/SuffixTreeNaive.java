@@ -23,17 +23,17 @@ public class SuffixTreeNaive {
 		root.addEdgeAndNewNode(0, string.length());
 
 		for (iteration = 0; iteration < string.length() - 2; ++iteration) {
-			 slowscan2(root, iteration + 1, string.length());
+			 slowscan(root, iteration + 1, string.length());
 		}
 		root.addEdgeAndNewNode(string.length() - 1, string.length());
 
 	}
 
-	Node slowscan2(Node startNode, int startIndex, int endIndex) {
+	Node slowscan(Node startNode, int startIndex, int endIndex) {
 		if (startIndex < endIndex) {
 			for (Map.Entry<Tuple, Node> edge : startNode.edges.entrySet()) {
 				if (shouldContinueDown(startIndex, endIndex, edge.getKey())) {
-					return slowscan2(startNode.edges.get(edge.getKey()),
+					return slowscan(startNode.edges.get(edge.getKey()),
 							startIndex + edge.getKey().second
 									- edge.getKey().first, endIndex);
 				}
@@ -43,7 +43,7 @@ public class SuffixTreeNaive {
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
 					
-					head.addEdgeAndNewNode(iteration + 1 + (startIndex - iteration), string.length());
+					head.addEdgeAndNewNode(iteration + 1 + getDepth(head), string.length());
 					
 					return head;
 				}
@@ -51,6 +51,26 @@ public class SuffixTreeNaive {
 		}
 		startNode.addEdgeAndNewNode(startIndex, string.length());
 		return startNode;
+	}
+	
+	protected Tuple findParentEdge(Node headOfI) {
+		for (Map.Entry<Tuple, Node> edge : headOfI.parent.edges.entrySet()) {
+			if (edge.getValue() == headOfI) {
+				return edge.getKey();
+			}
+		}
+		return null;
+	}
+	
+	public int getDepth(Node node) {
+		int sum = 0;
+		Node current = node;
+		while (current.parent != null) {
+			Tuple edge = findParentEdge(current);
+			sum += edge.second - edge.first;
+			current = current.parent;
+		}
+		return sum;
 	}
 	
 	public boolean equals(SuffixTreeNaive otherTree) {

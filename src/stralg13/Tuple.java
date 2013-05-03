@@ -11,9 +11,9 @@ public class Tuple {
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = 1023;
 		int result = 1;
-		result = prime * result + first;
+		result = prime * first;
 		result = prime * result + second;
 		return result;
 	}
