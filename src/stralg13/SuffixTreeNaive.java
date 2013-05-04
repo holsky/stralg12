@@ -25,8 +25,8 @@ public class SuffixTreeNaive {
 		for (iteration = 0; iteration < string.length() - 2; ++iteration) {
 			 slowscan(root, iteration + 1, string.length());
 		}
-		root.addEdgeAndNewNode(string.length() - 1, string.length());
-
+		Node leaf = root.addEdgeAndNewNode(string.length() - 1, string.length());
+		leaf.leafIndex = iteration + 1;
 	}
 
 	Node slowscan(Node startNode, int startIndex, int endIndex) {
@@ -43,13 +43,15 @@ public class SuffixTreeNaive {
 					Node head = startNode.splitEdgeAndReturnNewNode(
 							edge.getKey(), headIndex);
 					
-					head.addEdgeAndNewNode(iteration + 1 + getDepth(head), string.length());
+					Node leaf = head.addEdgeAndNewNode(iteration + 1 + getDepth(head), string.length());
+					leaf.leafIndex = iteration + 1;
 					
 					return head;
 				}
 			}
 		}
-		startNode.addEdgeAndNewNode(startIndex, string.length());
+		Node leaf = startNode.addEdgeAndNewNode(startIndex, string.length());
+		leaf.leafIndex = iteration + 1;
 		return startNode;
 	}
 	

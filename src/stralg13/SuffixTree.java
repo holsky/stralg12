@@ -110,7 +110,7 @@ public class SuffixTree {
 					leaf.leafIndex = iteration + 1;
 						
 					headOfIplus1 = head;
-					headOfI.suffixLink = startNode;
+					headOfI.suffixLink = head;
 
 					tailStart[iteration + 1] = iteration + 1  + getDepth(head);
 					return;
@@ -141,7 +141,7 @@ public class SuffixTree {
 					leaf.leafIndex = iteration + 1;
 					
 					headOfIplus1 = head;
-					headOfI.suffixLink = startNode;
+					//headOfI.suffixLink = startNode;
 					
 					tailStart[iteration + 1] = iteration + 1  + getDepth(head);
 					return head;

@@ -50,9 +50,10 @@ public class Node {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = 4095;
 		int result = 1;
 		result = prime * result + ((edges == null) ? 0 : edges.keySet().hashCode());
+		result += prime *  leafIndex;
 		return result;
 	}
 	
@@ -67,6 +68,9 @@ public class Node {
 		} else if (suffixLink.hashCode() != otherNode.suffixLink.hashCode())
 			return false;
 	    */
+	    if (leafIndex != otherNode.leafIndex)
+	    	return false;
+	    
 	    for (Map.Entry<Tuple, Node> edge : edges.entrySet()) {
 	        if (otherNode.edges.containsKey(edge.getKey())) {
 	            boolean result = edge.getValue().equals(otherNode.edges.get(edge.getKey()));
