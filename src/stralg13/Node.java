@@ -11,6 +11,9 @@ public class Node {
 	Node parent = null;
 	Node suffixLink = null;
 	
+	Tuple leafList;
+	Tuple largeList;
+	
 	int leafIndex = 0;
 	
 	public Node() {
@@ -57,8 +60,16 @@ public class Node {
 		return result;
 	}
 	
-	public boolean equals(Node otherNode) {
-		
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node otherNode = (Node) obj;
 	    if (edges.size() != otherNode.edges.size())
 	    	return false;
 	    

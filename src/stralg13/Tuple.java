@@ -9,6 +9,14 @@ public class Tuple {
 		this.second = second;
 	}
 	
+	public int size() {
+		return second - first;
+	}
+	
+	public boolean includes(int n) {
+		return n >= first && n <= second;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 1023;

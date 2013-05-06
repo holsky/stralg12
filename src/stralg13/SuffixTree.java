@@ -3,7 +3,7 @@ package stralg13;
 import java.util.Map;
 
 public class SuffixTree {
-	public static final String STRING_END = "$";
+	public static final String STRING_END = "~";
 	Node root;
 	String string;
 	int[] tailStart;
