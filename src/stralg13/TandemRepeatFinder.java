@@ -2,6 +2,7 @@ package stralg13;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +36,24 @@ public class TandemRepeatFinder {
 		findNonBranchingRepeats();
 	}
 
-	public static String findTandemRepeats(String file) throws Exception {
-		return new TandemRepeatFinder(readFile(file)).reportRepeats();
+	public static void findTandemRepeatsReportOnlyCount(String file, PrintStream out) throws Exception {
+		new TandemRepeatFinder(readFile(file)).reportCounts(out);
+	}
+	
+	void reportCounts(PrintStream out) {
+		out.print(branchingRepeats + " " + nonBranchingRepeats + "\n");
+	}
+
+	public static void findTandemRepeats(String file, PrintStream out) throws Exception {
+		new TandemRepeatFinder(readFile(file)).reportRepeats(out);
+	}
+	
+	public void reportRepeats(PrintStream out) {
+		String template = "(%d,%d,2) %s\n";
+		for (TandemRepeat repeat : repeats) {
+			out.print(String.format(template, repeat.index, repeat.length, repeat.branching ? "branching" : "non-branching"));
+		}
+		out.print(branchingRepeats + " " + nonBranchingRepeats + "\n");
 	}
 	
 	static String readFile  (String file) throws Exception {
@@ -159,13 +176,5 @@ public class TandemRepeatFinder {
 		return nonBranchingRepeats;
 	}
 	
-	public String reportRepeats() {
-		StringBuilder sb = new StringBuilder();
-		String template = "(%d,%d,2) %s\n";
-		for (TandemRepeat repeat : repeats) {
-			sb.append(String.format(template, repeat.index, repeat.length, repeat.branching ? "branching" : "non-branching"));
-		}
-		sb.append(branchingRepeats + " " + nonBranchingRepeats + "\n");
-		return sb.toString();
-	}
+	
 }
