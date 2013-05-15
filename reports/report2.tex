@@ -9,7 +9,7 @@
 
 \usepackage[dvips]{hyperref}
 \title{String Algorithms 2013 - Assignment 2}
-\author{Holger Schmeisky  201211113, Tashi Sherpa, Matus Tomlein}
+\author{Holger Schmeisky  201211113, Tashi Sherpa, Matus Tomlein 201210962}
 \date{30.04.2013}
 
 \begin{document}
@@ -28,4 +28,28 @@ We did not really face any big problems, after the preliminary observations made
 
 \clearpage
 \subsection*{Evaluation}
+We evaluated our implementation using a script that gradually increased the
+length of the input.
+It increased the input string size by 5000 characters each time until it
+reached the length of 147481 characters.
+The input was a sample DNA string.
+For each input size we measured the running time 10 times and calculated
+an average running time.
+
+The results can be seen on figure~\ref{fig:evaluation}.
+Although we calculated the running time as an average of 10 measurements,
+the results sometimes decrease for bigger inputs as can be seen on the graph.
+
+The graph shows that the running time does not increase in $O(n^2)$ fashion.
+The $O(n*log(n))$ running time would probably be more evident for larger
+inputs.
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.6]{images/tandem-evaluation_graph.png}
+\caption{Plot of measured running times. The Y-axis shows the running times
+in seconds and the x-axis shows the length of the input in characters.}
+\label{fig:evaluation}
+\end{figure}
+
 \end{document}
