@@ -74,8 +74,10 @@ def search_kmp(string, pattern):
         else:
             j = shift[j - 1]
 
-if __name__ == "__main__":
-    if len(sys.args) != 4
-        exit(0)
-    if sys.args[1] == "-kmp":
-        search_kmp()
+def open_file_and_search(search_function, text_file, pattern):
+    try:
+        with file(text_file) as f:
+            text = f.read()
+            search_function(text, pattern)
+    except IOError:
+        print ("file not found:" + text_file)

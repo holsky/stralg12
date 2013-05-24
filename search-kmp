@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+
+import stralgsearch
+import sys
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print "incorrect number of arguments: " + str(sys.argv)
+        exit(0)
+    stralgsearch.open_file_and_search(stralgsearch.search_kmp, sys.argv[1], sys.argv[2])
