@@ -1,4 +1,8 @@
+#!bin/python
+
+
 from __future__ import print_function
+import sys
 
 def calc_border_array(string):
     """
@@ -55,7 +59,7 @@ def search_kmp(string, pattern):
         2 5 
     """
     border = calc_border_array(pattern)
-    shift = [0] + [x+1 for x in border]
+    shift = [0] + [x+1 for x in border] 
     i = 0
     j = 0
     m = len(pattern)
@@ -69,3 +73,9 @@ def search_kmp(string, pattern):
             i = i + 1
         else:
             j = shift[j - 1]
+
+if __name__ == "__main__":
+    if len(sys.args) != 4
+        exit(0)
+    if sys.args[1] == "-kmp":
+        search_kmp()
