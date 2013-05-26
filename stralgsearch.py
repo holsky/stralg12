@@ -57,6 +57,9 @@ def search_kmp(string, pattern):
 
         >>> search_kmp("mississippi", "ss")
         2 5 
+
+        >>> search_kmp("acc", "ac")
+        0 
     """
     border = calc_border_array(pattern)
     shift = [0] + [x+1 for x in border] 
@@ -72,7 +75,7 @@ def search_kmp(string, pattern):
         if j==0: 
             i = i + 1
         else:
-            j = shift[j - 1]
+            j = shift[j - 1] - 1
 
 def open_file_and_search(search_function, text_file, pattern):
     try:
