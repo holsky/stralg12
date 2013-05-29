@@ -6,6 +6,7 @@
 \usepackage{fontenc}
 \usepackage{graphicx}
 \usepackage[a4paper, top=2cm]{geometry}
+\usepackage{amssymb}
 
 \usepackage[dvips]{hyperref}
 \title{String Algorithms 2013 - Assignment 3}
@@ -40,6 +41,16 @@ correctly.
 \clearpage
 \subsection*{Evaluation}
 
+\subsection*{Comparison with suffix tree}
 
+The question was:
+\emph{How many times should you search for a pattern in the same text before it faster to use search from mandatory project 1 (based on constructing the suffix tree) rather than search-ba or search-kmp?}
+
+As soon as searching for the pattern K times in BA and KMP takes longer
+than constructing the suffix tree for the input, we can say that searching in
+the suffix tree is more efficient.
+If we store the suffix tree, we have to pay the cost of creating it only once,
+afterwards searching for any pattern takes just $\mathcal{O}(M)$.
+However, in KMP and BA it always takes $\mathcal{O}(M+N)$ to search for a pattern.
 
 \end{document}
