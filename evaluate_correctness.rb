@@ -14,11 +14,11 @@ end
 return unless ARGV.any?
 
 input = File.read(ARGV.first)
-20.times do |i|
+1000.times do |i|
   q_from = Random.rand(input.length - 17)
   q_until = q_from + Random.rand(15) + 2
   query = input[q_from..q_until]
-  puts query
+  #puts query
   naive_matches = NaiveSearch.search(input, query)
   ba_matches = `./search-ba #{ARGV.first} #{query}`.split(' ')
   kmp_matches = `./search-kmp #{ARGV.first} #{query}`.split(' ')

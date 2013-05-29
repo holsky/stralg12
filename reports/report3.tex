@@ -31,11 +31,11 @@ During the correctness evaluation we discovered an index error in the implementa
 \subsection*{Evaluation of correctness}
 
 We created a script that evaluates the results of our KMP and BA algorithm
-implementations and compares them against the results of a simple algorithm
+implementations and compares them against the results of a naive algorithm
 that searches for a given pattern by comparing substrings at each index
 in the given string.
-We used a long DNA string as an input and generated random search patterns
-based on the input string.
+We used a long DNA string as an input and generated 100000 random search patterns
+based on the input string.\\
 
 According to the evaluation, both our KMP and BA implementations worked
 correctly.
@@ -45,7 +45,7 @@ correctly.
 The question was:
 \emph{How many times should you search for a pattern in the same text before it faster to use search from mandatory project 1 (based on constructing the suffix tree) rather than search-ba or search-kmp?}
 
-As soon as searching for the pattern K times in BA and KMP takes longer
+As soon as searching for the pattern $K$ times in BA and KMP takes longer
 than constructing the suffix tree for the input, we can say that searching in
 the suffix tree is more efficient.
 If we store the suffix tree, we have to pay the cost of creating it only once,
