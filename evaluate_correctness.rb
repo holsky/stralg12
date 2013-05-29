@@ -14,7 +14,8 @@ end
 return unless ARGV.any?
 
 input = File.read(ARGV.first)
-20.times do |i|
+failed = false
+1000.times do |i|
   q_from = Random.rand(input.length - 17)
   q_until = q_from + Random.rand(15) + 2
   query = input[q_from..q_until]
@@ -23,6 +24,10 @@ input = File.read(ARGV.first)
   ba_matches = `./search-ba #{ARGV.first} #{query}`.split(' ')
   kmp_matches = `./search-kmp #{ARGV.first} #{query}`.split(' ')
 
-  puts naive_matches == kmp_matches
-  puts naive_matches == ba_matches
+  failed = true unless naive_matches == kmp_matches
+  failed = true unless naive_matches == ba_matches
+  break if failed
 end
+
+puts "FAIL" if failed
+puts "OK" unless failed
