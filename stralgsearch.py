@@ -88,7 +88,8 @@ def open_file_and_search(search_function, text_file, pattern):
         with file(text_file) as f:
             text = f.read()
             results = search_function(text, pattern)
-            print (results)
+            for r in results:
+                print(str(r) + " " , end='')
     except IOError:
         print ("file not found:" + text_file)
 
@@ -99,17 +100,14 @@ def benchmark_searches(search_function, text_file, pattern_length):
             
             #pattern_starts = [random.randint(0, len(text) - pattern_length) for x in xrange(0, 10000)]
             #patterns = [text[pattern_start : pattern_start + pattern_length] for pattern_start in pattern_starts] 
-            pattern = "AAAAAAAAAB"   
-            text_minimum = 100
-            text_step = 10
+            text = "A"*100
+            step = 10
             for i in xrange(0,10):
-
-                current_text = text[:text_minimum + i * text_step]
-
+                pattern = "A" * (i*step - 1) + "B"
                 t_start = time.time()
                 t = 0
                 for i in xrange(1000):
-                    search_function(current_text, pattern)
+                    search_function(text, pattern)
                     t += time.time() - t_start
                 print(str(len(current_text)) + " " + str(t))
     except IOError:
