@@ -17,14 +17,17 @@
 
 \maketitle
 
-\subsection*{State of the algorithms}
-The algorithms work correctly for all inputs we tested.
+\subsection*{State of the project}
+Our algorithms work correctly and in the expected worst-case running time.
 
 \subsection*{Insights}
-
+\begin{itemize}
+  \item we chose python because coding in it is less verbose than in java
+  \item useful not to stick too close to pseudocode, think more about what needs to be done
+\end{itemize}
 
 \subsection*{Problems}
-
+During the correctness evaluation we discovered another index error in the implementation. We accessed the shift-array one position too far back, because we did not align the indices properly.
 
 \subsection*{Evaluation of correctness}
 
@@ -52,5 +55,24 @@ the suffix tree is more efficient.
 If we store the suffix tree, we have to pay the cost of creating it only once,
 afterwards searching for any pattern takes just $\mathcal{O}(M)$.
 However, in KMP and BA it always takes $\mathcal{O}(M+N)$ to search for a pattern.
+
+
+\subsection*{Evaluation}
+We evaluated the worst-case running time of the algorithm by generating worst-case inputs and running them repeatedly to get a running time independent of invocation overhead and computer variance. We executed the experiment on one of our laptops.\\
+
+A worst-case inputs for both algorithms is a text of all the same letters, for example "AAAAAAA" and a pattern of the same letters, but with a different one at the end, e.g. "AAB". For this input the algorithm actually has to scan all characters of the input text once, because it only mismatches on the last character of the pattern, and there the border is 0.
+\begin{figure}
+  \centering
+  \includegraphics{./images/eval_kmp.png}
+  % eval_kmp.pdf: 595x842 pixel, 72dpi, 20.99x29.70 cm, bb=0 0 595 842
+  \label{fig:eval}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics{./images/eval_ba - 1.png}
+  % eval_kmp.pdf: 595x842 pixel, 72dpi, 20.99x29.70 cm, bb=0 0 595 842
+  \label{fig:eval}
+\end{figure}
 
 \end{document}
